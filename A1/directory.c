@@ -4,9 +4,14 @@
 #include <unistd.h>
 
 
+const char MENU[] = "Select the option(s) appropriately by entering the number:\n Enter 1 for creating a directory\n Enter 2 for removing directory\n Enter 3 for printing working directory\n Enter 4 for changing directory one level up\n Enter 5 for reading the contents of directory\n Enter 6 for closing the current directory\n Enter q to exit the program\n"; 
+
 int main() {
 
     // present user with the list of options to select directory operations, keep looping until user enters q (print menu and ask for input, exit if input ==q)
+    printf("%s\n", MENU);
+
+
 
 
     // create a directory
