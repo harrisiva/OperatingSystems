@@ -16,15 +16,33 @@ int main() {
     while (userSelection[0]!='q'){
         printf("%s\n", MENU);
         scanf("%s",userSelection);
-        // check length (invalid error handling)
+        // check length (invalid error handling) (will it be diff since we cap it off anyway?)
         if (userSelection[0]!='q') {
             switch (userSelection[0])
             {
-            case '1':
-                printf("Directory Operation for 1\n");
+            case '1': // Create new directory
+                char newDirectoryName[100];
+                printf("Enter the Directory name you want to create:\n");
+                scanf("%s",newDirectoryName);
+                // Add error handling for the directoryName (no name, invalid (contains dots etc))
+                if (mkdir(newDirectoryName, 0700)==0) {
+                    printf("Directory is Created Successfuly.\n");
+                } else {
+                    printf("Failed to create directory\n");
+                }
+                break;
+            case '2': // Remove a existing directory
+                char directoryToRemove[100];
+                printf("Enter the Directory name you want to remove:\n");
+                scanf("%s",directoryToRemove);
+                if (rmdir(directoryToRemove)==0) {
+                    printf("Directory is removed Successfuly.\n");
+                } else {
+                    printf("Failed to remove directory\n");
+                }
                 break;
             default:
-                printf("Default Condition\n");
+                printf("Default Condition (no operation triggered from the menu, invalid input, raise alert).\n");
                 break;
             }
         }
