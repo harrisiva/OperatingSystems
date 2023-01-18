@@ -50,13 +50,24 @@ int main() {
             case '3':
                 char cwd[10000];
                 getcwd(cwd, sizeof(cwd)); // Check if this ran successfully, if not print saying it failed
-                printf("Current working directory is: %s",cwd); 
+                printf("Current working directory is: %s\n",cwd); 
                 break;
 
             case '4': // Change working directory one up
-                // Working directory before
-                // Operation success or failed
-                // Working directory after operation
+
+                char originalDirectory[10000];
+                getcwd(originalDirectory, sizeof(originalDirectory));
+                printf("Working Directory Before Operation:%s\n",originalDirectory);
+
+                if (chdir("..")==0){ // Change the directory and check if the operation was successful
+                    printf("Directory Changed Successfully.\n");
+                    char directoryAfterChange[10000];
+                    getcwd(directoryAfterChange, sizeof(directoryAfterChange));
+                    printf("Working Directory After Operation:%s\n",directoryAfterChange);
+                } else {
+                    printf("Directory Changed Unsuccessful.\n");
+                }
+
                 break;
 
             default:
