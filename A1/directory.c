@@ -20,7 +20,9 @@ int main() {
         if (userSelection[0]!='q') {
             switch (userSelection[0])
             {
-            case '1': // Create new directory
+
+            // Create new directory
+            case '1': 
                 char newDirectoryName[100];
                 printf("Enter the Directory name you want to create:\n");
                 scanf("%s",newDirectoryName);
@@ -30,8 +32,10 @@ int main() {
                 } else {
                     printf("Failed to create directory\n");
                 }
-                break;
-            case '2': // Remove a existing directory
+                break; 
+
+            // Remove a existing directory
+            case '2': 
                 char directoryToRemove[100];
                 printf("Enter the Directory name you want to remove:\n");
                 scanf("%s",directoryToRemove);
@@ -41,6 +45,20 @@ int main() {
                     printf("Failed to remove directory\n");
                 }
                 break;
+
+            // Print the current working directory
+            case '3':
+                char cwd[10000];
+                getcwd(cwd, sizeof(cwd)); // Check if this ran successfully, if not print saying it failed
+                printf("Current working directory is: %s",cwd); 
+                break;
+
+            case '4': // Change working directory one up
+                // Working directory before
+                // Operation success or failed
+                // Working directory after operation
+                break;
+
             default:
                 printf("Default Condition (no operation triggered from the menu, invalid input, raise alert).\n");
                 break;
