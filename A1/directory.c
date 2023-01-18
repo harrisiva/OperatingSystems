@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 
 
 const char MENU[] = "Select the option(s) appropriately by entering the number:\n Enter 1 for creating a directory\n Enter 2 for removing directory\n Enter 3 for printing working directory\n Enter 4 for changing directory one level up\n Enter 5 for reading the contents of directory\n Enter 6 for closing the current directory\n Enter q to exit the program"; 
@@ -16,6 +17,7 @@ int main() {
         printf("%s\n", MENU);
         scanf("%s",userSelection);
         printf("%s\n",userSelection);
+        // Add error handling (check if the length is greater than 1, if so, raise error)
     }
 
 
