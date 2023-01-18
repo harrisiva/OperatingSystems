@@ -6,6 +6,9 @@
 
 int main() {
 
+    // present user with the list of options to select directory operations, keep looping until user enters q (print menu and ask for input, exit if input ==q)
+
+
     // create a directory
     //mkdir("test", 0700); // 0700 is the mode, not sure what it exactly means but mkdir is the command we want, same in linux
 
