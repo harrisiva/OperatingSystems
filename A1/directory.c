@@ -85,7 +85,7 @@ int main() {
                 break;
 
             default:
-                printf("Default Condition (no operation triggered from the menu, invalid input, raise alert).\n");
+                printf("Invalid input. Please try again.\n");
                 break;
             }
         }
