@@ -14,10 +14,10 @@ int main(int argc, char *argv[] ){
 
         // Open both the input and output file (handle errors) and set a DIR pointer to the files
         // Store the int response (file_descriptor)
-        if (open(outputFilename, O_RDWR | O_APPEND | O_CREAT | 0700)!=-1){ printf("Created or opened file successfully");} // Create the output file
+        int output_file_descriptor;
+        if ((output_file_descriptor=open(outputFilename, O_RDWR | O_APPEND | O_CREAT | 0700))!=-1){ printf("Created or opened file successfully");} // Create the output file
         else {printf("Failed to create or open file");}
 
-        
         // Open the input file (check if it opens)
 
         // Create the output file, open it and set a DIR pointer to it (check if success)
