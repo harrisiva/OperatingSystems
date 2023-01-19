@@ -3,8 +3,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
-#include<dirent.h> // Ask prof if we can use this
-
+#include<dirent.h> 
+// Add error handling for the directory contents printing case
 
 const char MENU[] = "Select the option(s) appropriately by entering the number:\n Enter 1 for creating a directory\n Enter 2 for removing directory\n Enter 3 for printing working directory\n Enter 4 for changing directory one level up\n Enter 5 for reading the contents of directory\n Enter 6 for closing the current directory\n Enter q to exit the program"; 
 
@@ -70,7 +70,7 @@ int main() {
                 }
                 break;
 
-            case '5': // Print contents of the working directory
+            case '5': // Print contents of the working directory (TODO: Add error handling)
                 char currentWorkingDirectory[10000]; // Declare variable to store current directory name
                 getcwd(currentWorkingDirectory, sizeof(currentWorkingDirectory)); // Get and set current directory name
                 DIR* directory = opendir(currentWorkingDirectory); // Get pointer to the current directory (and open the directory)
