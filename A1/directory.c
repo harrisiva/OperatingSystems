@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include<dirent.h> // Ask prof if we can use this
 
 
 const char MENU[] = "Select the option(s) appropriately by entering the number:\n Enter 1 for creating a directory\n Enter 2 for removing directory\n Enter 3 for printing working directory\n Enter 4 for changing directory one level up\n Enter 5 for reading the contents of directory\n Enter 6 for closing the current directory\n Enter q to exit the program"; 
@@ -12,7 +13,7 @@ int main() {
     // present user with the list of options to select directory operations, keep looping until user enters q (print menu and ask for input, exit if input ==q)
     // Set the userSelection to initially be nothing, so you enter the loop and keep running until you hit the q value, add error handling as well
     char userSelection[1];
-
+    
     while (userSelection[0]!='q'){
         printf("%s\n", MENU);
         scanf("%s",userSelection);
@@ -70,6 +71,12 @@ int main() {
                 break;
 
             case '5': // Print contents of the working directory
+                char currentWorkingDirectory[10000]; // Declare variable to store current directory name
+                getcwd(currentWorkingDirectory, sizeof(currentWorkingDirectory)); // Get and set current directory name
+                DIR* directory = opendir(currentWorkingDirectory); // Get pointer to the current directory (and open the directory)
+                struct dirent *directory_info; // Get information of the current directory
+                while ((directory_info=readdir(directory))!=NULL){printf("%s\n",directory_info->d_name);} // Loop over directory info (files) and print their name
+                closedir(directory); // Close the directory using the directory pointer (frees up temporary memory??)
                 break;
 
             case '6': // Close the working directory
