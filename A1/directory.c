@@ -19,12 +19,13 @@ int main() {
         scanf("%s",userSelection);
         // check length (invalid error handling) (will it be diff since we cap it off anyway?)
         if (userSelection[0]!='q') {
+            // Get current working directory (make it a variable here so it can be used by the other function calls below)
             switch (userSelection[0])
             {
 
             // Create new directory
             case '1': 
-                char newDirectoryName[100];
+                char newDirectoryName[300];
                 printf("Enter the Directory name you want to create:\n");
                 scanf("%s",newDirectoryName);
                 // Add error handling for the directoryName (no name, invalid (contains dots etc))
@@ -37,7 +38,7 @@ int main() {
 
             // Remove a existing directory
             case '2': 
-                char directoryToRemove[100];
+                char directoryToRemove[300];
                 printf("Enter the Directory name you want to remove:\n");
                 scanf("%s",directoryToRemove);
                 if (rmdir(directoryToRemove)==0) {
@@ -56,13 +57,13 @@ int main() {
 
             case '4': // Change working directory one up
 
-                char originalDirectory[10000];
+                char originalDirectory[300];
                 getcwd(originalDirectory, sizeof(originalDirectory));
                 printf("Working Directory Before Operation:%s\n",originalDirectory);
 
                 if (chdir("..")==0){ // Change the directory and check if the operation was successful
                     printf("Directory Changed Successfully.\n");
-                    char directoryAfterChange[10000];
+                    char directoryAfterChange[300];
                     getcwd(directoryAfterChange, sizeof(directoryAfterChange));
                     printf("Working Directory After Operation:%s\n",directoryAfterChange);
                 } else {
@@ -71,15 +72,19 @@ int main() {
                 break;
 
             case '5': // Print contents of the working directory (TODO: Add error handling)
-                char currentWorkingDirectory[10000]; // Declare variable to store current directory name
+                char currentWorkingDirectory[300]; // Declare variable to store current directory name
                 getcwd(currentWorkingDirectory, sizeof(currentWorkingDirectory)); // Get and set current directory name
                 DIR* directory = opendir(currentWorkingDirectory); // Get pointer to the current directory (and open the directory)
                 struct dirent *directory_info; // Get information of the current directory
                 while ((directory_info=readdir(directory))!=NULL){printf("%s\n",directory_info->d_name);} // Loop over directory info (files) and print their name
-                closedir(directory); // Close the directory using the directory pointer (frees up temporary memory??)
+                closedir(directory); // Close the directory using the directory pointer (frees up temporary memory)
                 break;
 
             case '6': // Close the working directory
+                char workingDirectory[300]; // Declare variable to store current directory name
+                getcwd(workingDirectory, sizeof(workingDirectory));
+                DIR* currentWrkDirectory = opendir(workingDirectory);
+                if (closedir(currentWrkDirectory)==0) {printf("Directory closed successfully.\n");} else {printf("Directory closed unsuccessfully.\n");}
                 break;
 
             default:
