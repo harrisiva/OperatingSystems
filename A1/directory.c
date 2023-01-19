@@ -23,6 +23,9 @@ int main() {
             switch (userSelection[0])
             {
 
+            char workingDirectoryName[300];
+            getcwd(workingDirectoryName, sizeof(workingDirectoryName));
+
             // Create new directory
             case '1': 
                 char newDirectoryName[300];
@@ -49,41 +52,35 @@ int main() {
                 break;
 
             // Print the current working directory
-            case '3':
-                char cwd[10000];
+            case '3': // Calling CWD again to meet assignment requirements
+                char cwd[300];
                 getcwd(cwd, sizeof(cwd)); // Check if this ran successfully, if not print saying it failed
                 printf("Current working directory is: %s\n",cwd); 
                 break;
 
             case '4': // Change working directory one up
 
-                char originalDirectory[300];
-                getcwd(originalDirectory, sizeof(originalDirectory));
-                printf("Working Directory Before Operation:%s\n",originalDirectory);
+                printf("Working Directory Before Operation:%s\n",workingDirectoryName);
 
                 if (chdir("..")==0){ // Change the directory and check if the operation was successful
                     printf("Directory Changed Successfully.\n");
-                    char directoryAfterChange[300];
-                    getcwd(directoryAfterChange, sizeof(directoryAfterChange));
-                    printf("Working Directory After Operation:%s\n",directoryAfterChange);
+                    char directoryNameAfterChange[300];
+                    getcwd(directoryNameAfterChange, sizeof(directoryNameAfterChange));
+                    printf("Working Directory After Operation:%s\n",directoryNameAfterChange);
                 } else {
                     printf("Directory Changed Unsuccessful.\n");
                 }
                 break;
 
             case '5': // Print contents of the working directory (TODO: Add error handling)
-                char currentWorkingDirectory[300]; // Declare variable to store current directory name
-                getcwd(currentWorkingDirectory, sizeof(currentWorkingDirectory)); // Get and set current directory name
-                DIR* directory = opendir(currentWorkingDirectory); // Get pointer to the current directory (and open the directory)
+                DIR* directory = opendir(workingDirectoryName); // Get pointer to the current directory (and open the directory)
                 struct dirent *directory_info; // Get information of the current directory
                 while ((directory_info=readdir(directory))!=NULL){printf("%s\n",directory_info->d_name);} // Loop over directory info (files) and print their name
                 closedir(directory); // Close the directory using the directory pointer (frees up temporary memory)
                 break;
 
             case '6': // Close the working directory
-                char workingDirectory[300]; // Declare variable to store current directory name
-                getcwd(workingDirectory, sizeof(workingDirectory));
-                DIR* currentWrkDirectory = opendir(workingDirectory);
+                DIR* currentWrkDirectory = opendir(workingDirectoryName);
                 if (closedir(currentWrkDirectory)==0) {printf("Directory closed successfully.\n");} else {printf("Directory closed unsuccessfully.\n");}
                 break;
 
