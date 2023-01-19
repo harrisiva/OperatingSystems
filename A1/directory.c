@@ -91,11 +91,5 @@ int main() {
         }
     }
 
-    // Print contents of a directory onto the terminal
-    // use listdir
-
-    // Close a directory (current)
-    // use closedir function
-
     return 0;
 }
