@@ -37,8 +37,10 @@ int main(int argc, char *argv[] ){
         close(fd_to_read);
         close(fd_to_write);
 
+        printf("The contents of file %s have been successfully copied into the %s file\n", inputFilename, outputFilename);
+
     } else { // If the wrong number of inputs are provided, display an output message
-        printf("Invalid number of input parameters");
+        printf("Insufficient parameters passed.\n");
     }
     
     return 0;
