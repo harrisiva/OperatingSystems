@@ -13,58 +13,29 @@ int main(int argc, char *argv[] ){
         char inputFilename[300]; strcpy(inputFilename,argv[1]);
         char outputFilename[300]; strcpy(outputFilename,argv[2]);
 
-        // Open both the input and output file (handle errors) and set a DIR pointer to the files
-        // Store the int response (file_descriptor)
+        // Remove the output file (if it exists, the function will work, else it will just return -1 but we ignore this) (cheap alternative to using the access function)
+        remove(outputFilename);
 
-        // Attempt to open the input file. If this succeeds, proceed to create the output file (if it exists already, raise alert?)
+        // Open the required files and store their file descriptor <- used for read, write, and close system calls
+        int fd_to_read = open(inputFilename,O_RDONLY);
+        int fd_to_write = open(outputFilename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR); // Create output file and open it for reading only (other flags meaning??? <- something to do with file access control OS side)
 
-        int input_file_descriptor; 
-        if ((input_file_descriptor=open(inputFilename, O_RDONLY, 0700))!=-1){ 
-            printf("Opened input file successfully\n");
-    
-            // Check if the output file already exists, if so, delete it (will be created again down below)
-            int result;
-            result=access(outputFilename, F_OK);
-            if (result!=-1) {
-                printf("Output file already exists\n");
-                if (remove(outputFilename)!=-1){ // Delete outputfile
-                    printf("Successfully deleted existing output file.\n");
-                } 
-            } 
-
-                int nread;
-                char buff[200];
-                nread = read(input_file_descriptor,buff,sizeof(buff));
-                printf("%d Bytes read\n",nread);
-                write(1, buff, nread);
-
-            // Create the output file and open it for reading/writing and appending
-            int output_file_descriptor; 
-            if ((output_file_descriptor=open(outputFilename, O_APPEND | O_CREAT | 0700))!=-1){ // Create the output file
-                printf("Created or opened file (%d) successfully\n",output_file_descriptor);                
-                int close_response;
-                close_response = close(output_file_descriptor); // Close output file after operating on it
-                printf("Closed (%d)\n",close_response);
-
-            } else {printf("Failed to create and open the output file\n");}
-
-            close(input_file_descriptor); // Close input file after operating on it
-
-        } else {
-            printf("Failed to open the input file\n");
+        // Error handling related to opening files
+        if (fd_to_read == -1 || fd_to_write == -1){
+            printf("Failed to open one of the files\n");
+            return -1;
         }
-
-
-
-
-
-        // Open the input file (check if it opens)
-
-        // Create the output file, open it and set a DIR pointer to it (check if success)
-        // Iterate over contents of input file (handle errors)
-            // Copy to output file (handle errors)
-
-
+        
+        // Transfer (read and write) bytes (file data)
+        char c;
+        int bytes;
+        while ((bytes = read(fd_to_read, &c, sizeof(c)))>0){
+            write(fd_to_write, &c,sizeof(c));
+        }
+        
+        // Close both the files
+        close(fd_to_read);
+        close(fd_to_write);
 
     } else { // If the wrong number of inputs are provided, display an output message
         printf("Invalid number of input parameters");
