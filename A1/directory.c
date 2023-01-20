@@ -19,12 +19,12 @@ int main() {
         scanf("%s",userSelection);
         // check length (invalid error handling) (will it be diff since we cap it off anyway?)
         if (userSelection[0]!='q') {
-            // Get current working directory (make it a variable here so it can be used by the other function calls below)
-            switch (userSelection[0])
-            {
-
+            // Get current working directory (used by multiple cases)
             char workingDirectoryName[300];
             getcwd(workingDirectoryName, sizeof(workingDirectoryName));
+            
+            switch (userSelection[0])
+            {
 
             // Create new directory
             case '1': 

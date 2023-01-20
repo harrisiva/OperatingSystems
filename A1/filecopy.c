@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h> 
 
 
 int main(int argc, char *argv[] ){
@@ -14,9 +15,38 @@ int main(int argc, char *argv[] ){
 
         // Open both the input and output file (handle errors) and set a DIR pointer to the files
         // Store the int response (file_descriptor)
-        int output_file_descriptor;
-        if ((output_file_descriptor=open(outputFilename, O_RDWR | O_APPEND | O_CREAT | 0700))!=-1){ printf("Created or opened file successfully");} // Create the output file
-        else {printf("Failed to create or open file");}
+
+        // Attempt to open the input file. If this succeeds, proceed to create the output file (if it exists already, raise alert?)
+
+        int input_file_descriptor; 
+        if ((input_file_descriptor=open(inputFilename, O_RDONLY, 0700))!=-1){ 
+            printf("Opened input file successfully\n");
+    
+            // Check if the output file already exists, if so, delete it (will be created again down below)
+            int result;
+            result=access(outputFilename, F_OK);
+            if (result!=-1) {
+                printf("Output file already exists\n");
+                if (remove(outputFilename)!=-1){ // Delete outputfile
+                    printf("Successfully deleted existing output file.\n");
+                } 
+            } 
+
+            // // Create the output file and open it for reading/writing and appending
+            int output_file_descriptor; 
+            if ((output_file_descriptor=open(outputFilename, O_APPEND | O_CREAT | 0700))!=-1){ // Create the output file
+                printf("Created or opened file (%d) successfully\n",output_file_descriptor);
+                close(output_file_descriptor);
+            } 
+            else {printf("Failed to create and open the output file\n");}
+
+        } else {
+            printf("Failed to open the input file\n");
+        }
+
+
+
+
 
         // Open the input file (check if it opens)
 
