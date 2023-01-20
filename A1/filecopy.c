@@ -32,13 +32,23 @@ int main(int argc, char *argv[] ){
                 } 
             } 
 
-            // // Create the output file and open it for reading/writing and appending
+                int nread;
+                char buff[200];
+                nread = read(input_file_descriptor,buff,sizeof(buff));
+                printf("%d Bytes read\n",nread);
+                write(1, buff, nread);
+
+            // Create the output file and open it for reading/writing and appending
             int output_file_descriptor; 
             if ((output_file_descriptor=open(outputFilename, O_APPEND | O_CREAT | 0700))!=-1){ // Create the output file
-                printf("Created or opened file (%d) successfully\n",output_file_descriptor);
-                close(output_file_descriptor);
-            } 
-            else {printf("Failed to create and open the output file\n");}
+                printf("Created or opened file (%d) successfully\n",output_file_descriptor);                
+                int close_response;
+                close_response = close(output_file_descriptor); // Close output file after operating on it
+                printf("Closed (%d)\n",close_response);
+
+            } else {printf("Failed to create and open the output file\n");}
+
+            close(input_file_descriptor); // Close input file after operating on it
 
         } else {
             printf("Failed to open the input file\n");
