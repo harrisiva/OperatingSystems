@@ -3,19 +3,27 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// figure out structure for the multi processing (handle multiple nested child processes) and then bring in code from test.c
 int main(){
-    pid_t pid;
-    pid = fork();
-    if (pid<0){
-        printf("Fork Failed");
-        return 1;
-    } else if (pid==0){
-        printf(stdout, "Created Child");
-        execlp("/bin/ls","ls",NULL);
-        printf(stdout,"Executed execlp");
-    } else {
+    // pid_t pid; // at the start of the script, same in either case
+    if (fork()==0){ // in grad TA process
+        printf("In GradTA 1\n");
+        int i;
+        for (i=0;i<2;i++){
+        if (fork()==0){
+            printf("In TA Layer%i\n");
+        } else {
+            printf("In TA's GradTA calling wait\n");
+            wait(NULL);
+            printf("In TA's GradTA, wait finished\n");
+        }
+        }
+
+    }  else { // in teacher process
+        printf("In teacher, calling wait\n");
+        // set up the shared memory (PRODUCER) with the matrix
         wait(NULL);
-        printf(stdout,"Child Complete");
+        printf("Wait finished\n");
     }
 
     // Read text file using kernel commands (from A1 filecopy)
