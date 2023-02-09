@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// assuming static number of students, chapters and assignments (for now)
+#define MAX_STUDENTS 10
+#define MAX_CHAPTERS 3
+#define MAX_ASSIGNMENTS 2
+
 int main(){
 
-
-    // assuming static number of students, chapters and assignments for now
-    int MAX_STUDENTS = 10;
-    int MAX_CHAPTERS = 3; 
-    int MAX_ASSIGNMENTS = 2;
     
     // declare 2d array (matrix) for storing grades
     int sample_in_grades[MAX_STUDENTS][MAX_CHAPTERS*MAX_ASSIGNMENTS];
@@ -36,9 +36,9 @@ int main(){
         } printf("\n");
     }
 
+    // since we assume the number of chapters will remain constant,
+    // 
 
-    // Read text file using kernel commands (from A1 filecopy)
-    // create 2d matrix/array of grades 
     // [[grade_set_1],[grade_set_2]] <- parent
     // [[chapter_1_grades], [chapter_2_grades]] <- grad TA (==num_of_grades_in_grade_set/2)
     // [[assignment_1_grades], [assignment_2_grades]] <- TA process (==num_of_assignment_grades) 
