@@ -1,37 +1,94 @@
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
-// figure out structure for the multi processing (handle multiple nested child processes) and then bring in code from test.c
-int main(){
-    // pid_t pid; // at the start of the script, same in either case
-    if (fork()==0){ // in grad TA process
-        printf("In GradTA 1\n");
-        int i;
-        for (i=0;i<2;i++){
-        if (fork()==0){
-            printf("In TA Layer%i\n");
-        } else {
-            printf("In TA's GradTA calling wait\n");
-            wait(NULL);
-            printf("In TA's GradTA, wait finished\n");
-        }
-        }
+int main(int arg1, char *arg2[]) {
 
-    }  else { // in teacher process
-        printf("In teacher, calling wait\n");
-        // set up the shared memory (PRODUCER) with the matrix
-        wait(NULL);
-        printf("Wait finished\n");
-    }
+	//variables initialization
+	int cols = 0;
+	char *row_num;
+	int finalRow = 0;
+	int final_grades[10][10];
+	char *fileInput = arg2[1];
+	int count = 0;
+	char buf[25];
 
-    // Read text file using kernel commands (from A1 filecopy)
-    // create 2d matrix/array of grades 
-    // [[grade_set_1],[grade_set_2]] <- parent
-    // [[chapter_1_grades], [chapter_2_grades]] <- grad TA (==num_of_grades_in_grade_set/2)
-    // [[assignment_1_grades], [assignment_2_grades]] <- TA process (==num_of_assignment_grades) 
-    // calculate average, print, and terminate child process
+	
+	if (arg1 > 2) {
+		printf("Wrong Usage: give proper arguments\n");
+		return 1;
+	}
 
-    return 0;
+	int filevar = access(fileInput, F_OK);
+	if (filevar != 0) { //if filevar equals 0 fails to access file
+		printf("Access failed %s file", fileInput);
+		return 0;
+	} else {
+		int fd = open(fileInput, O_RDWR, S_IRWXU);
+		if (fd == -1) {
+			perror("File not opened: Error"); //error if -1
+		}
+		close(fd);
+	}
+	FILE *txt_fd = fopen(fileInput, "r"); //opening file for reading
+	int array_grade;
+	int grade_num = 0;
+	while ((row_num = fgets(buf, sizeof(buf), txt_fd)) != NULL) {
+
+		while (sscanf(row_num, "%d%n", &array_grade, &grade_num) == 1) {
+
+			final_grades[finalRow][cols] = array_grade;  
+			if (finalRow == 0)
+				count++;
+			row_num += grade_num;
+			cols++;
+		}
+		finalRow++;
+		cols = 0;
+	}
+
+	fclose(txt_fd);
+
+	
+	for (int i = 0; i < finalRow; i++) { //iteration
+		int gradTA = fork();
+		if (gradTA < 0) {
+			printf("Failed to fork gradTA");
+		} else if (gradTA == 0) {
+		
+			for (int hw = 0; hw < count; hw++) { //iteration 
+
+				int numTA = fork();
+			
+				if (numTA < 0) {
+					printf("Failed to fork TA");
+				}
+				
+				else if (numTA == 0) {
+				
+					int gradesum = 0;
+					for (int j = 0; j < finalRow; j++) {
+						gradesum += final_grades[j][hw];
+					}
+					double grade_avg = (double) gradesum / finalRow;
+					printf("Assignment %d - Average = %f \n", hw + 1,
+							grade_avg);
+					grade_avg = 0;
+					break;
+				}
+				
+				else if (numTA > 0) {
+					wait(NULL);
+				}
+			}
+			break;
+		} else if (gradTA > 0) {
+			wait(NULL);
+			break;
+		}
+	}
+	return 0;
 }
