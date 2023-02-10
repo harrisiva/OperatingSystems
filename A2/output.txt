@@ -1,0 +1,36 @@
+The output of: uname -a
+ : is
+>>>>>>>>>>>>>>>
+Linux DESKTOP-KVG4JJM 5.10.16.3-microsoft-standard-WSL2 #1 SMP Fri Apr 2 22:23:49 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+<<<<<<<<<<<<<<<
+The output of: free -m
+ : is
+>>>>>>>>>>>>>>>
+               total        used        free      shared  buff/cache   available
+Mem:            6269         384        5697           0         187        5669
+Swap:           2048           0        2048
+<<<<<<<<<<<<<<<
+The output of: ls -l -a -F
+ : is
+>>>>>>>>>>>>>>>
+total 76
+drwxr-xr-x 2 harri harri  4096 Feb  9 23:49 ./
+drwxr-xr-x 6 harri harri  4096 Feb  9 18:53 ../
+-rwxr-xr-x 1 harri harri 20128 Feb  9 23:49 assignment_average*
+-rw-r--r-- 1 harri harri  2238 Feb  9 23:48 assignment_average.c
+-rw-r--r-- 1 harri harri   715 Feb  9 19:09 makefile
+-rw-r--r-- 1 harri harri   452 Feb  9 23:49 output.txt
+-rwxr-xr-x 1 harri harri 21600 Feb  9 23:49 process_management*
+-rw-r--r-- 1 harri harri  3478 Feb  9 23:43 process_management.c
+-rw-r--r-- 1 harri harri   175 Feb  9 19:25 sample_in_grades.txt
+-rw-r--r-- 1 harri harri    39 Feb  9 20:06 sample_in_process.txt
+<<<<<<<<<<<<<<<
+The output of: whoami
+ : is
+>>>>>>>>>>>>>>>
+harri
+<<<<<<<<<<<<<<<
+The output of: pwd : is
+>>>>>>>>>>>>>>>
+/home/harri/CP386/A2
+<<<<<<<<<<<<<<<
