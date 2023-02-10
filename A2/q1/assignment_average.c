@@ -1,3 +1,8 @@
+/*
+    Name: Harriharan Sivakumar
+    Student ID: 200676770
+    Date: 2023-02-09
+*/
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -8,40 +13,26 @@
 
 int main(int arg1, char *arg2[]) {
     
-	//variables initialization
+	//Initialize variables
 	int cols = 0;
 	char *row_num;
+	char *filename;
+
 	int finalRow = 0;
-	int final_grades[10][10];
-	char *fileInput = arg2[1];
+	int grades[10][10];
+	
 	int total_cols = 0;
 	char buf[25];
 
-	if (arg1 > 2) {
-		printf("Wrong Usage: give proper arguments\n");
-		return 1;
-	}
-	
-	int filevar = access(fileInput, F_OK);
-	if (filevar != 0) { //if filevar equals 0 fails to access file
-		printf("Access failed %s file", fileInput);
-		return 0;
-	} else {
-		int fd = open(fileInput, O_RDWR, S_IRWXU);
-		if (fd == -1) {
-			perror("File not opened: Error"); //error if -1
-		}
-		close(fd);
-	}
+	if (arg1>2 || arg1<2) {printf("Incorrect number of arguments given, please try again.\n");return 1;}
+	filename = arg2[1];
 
-	FILE *txt_fd = fopen(fileInput, "r"); //opening file for reading
+	FILE *fp = fopen(filename, "r"); // open file to read for grades
 	int array_grade;
 	int grade_num = 0;
-	while ((row_num = fgets(buf, sizeof(buf), txt_fd)) != NULL) {
-
+	while ((row_num = fgets(buf, sizeof(buf), fp)) != NULL) {
 		while (sscanf(row_num, "%d%n", &array_grade, &grade_num) == 1) {
-
-			final_grades[finalRow][cols] = array_grade;  
+			grades[finalRow][cols] = array_grade;  
 			if (finalRow == 0)
 				total_cols++;
 			row_num += grade_num;
@@ -51,7 +42,8 @@ int main(int arg1, char *arg2[]) {
 		cols = 0;
 	}
 
-	fclose(txt_fd);
+    // close file after reading grades
+	fclose(fp);
 
 	
 	for (int i = 0; i < finalRow; i++) { //iteration
@@ -72,7 +64,7 @@ int main(int arg1, char *arg2[]) {
 				
 					int gradesum = 0;
 					for (int j = 0; j < finalRow; j++) {
-						gradesum += final_grades[j][hw];
+						gradesum += grades[j][hw];
 					}
 					double grade_avg = (double) gradesum / finalRow;
 					printf("Assignment %d - Average = %f \n", hw + 1,grade_avg);
