@@ -5,23 +5,23 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-int main(int arg1, char *arg2[]) {
 
+int main(int arg1, char *arg2[]) {
+    
 	//variables initialization
 	int cols = 0;
 	char *row_num;
 	int finalRow = 0;
 	int final_grades[10][10];
 	char *fileInput = arg2[1];
-	int count = 0;
+	int total_cols = 0;
 	char buf[25];
 
-	
 	if (arg1 > 2) {
 		printf("Wrong Usage: give proper arguments\n");
 		return 1;
 	}
-
+	
 	int filevar = access(fileInput, F_OK);
 	if (filevar != 0) { //if filevar equals 0 fails to access file
 		printf("Access failed %s file", fileInput);
@@ -33,6 +33,7 @@ int main(int arg1, char *arg2[]) {
 		}
 		close(fd);
 	}
+
 	FILE *txt_fd = fopen(fileInput, "r"); //opening file for reading
 	int array_grade;
 	int grade_num = 0;
@@ -42,7 +43,7 @@ int main(int arg1, char *arg2[]) {
 
 			final_grades[finalRow][cols] = array_grade;  
 			if (finalRow == 0)
-				count++;
+				total_cols++;
 			row_num += grade_num;
 			cols++;
 		}
@@ -59,7 +60,7 @@ int main(int arg1, char *arg2[]) {
 			printf("Failed to fork gradTA");
 		} else if (gradTA == 0) {
 		
-			for (int hw = 0; hw < count; hw++) { //iteration 
+			for (int hw = 0; hw < total_cols; hw++) { //iteration 
 
 				int numTA = fork();
 			
@@ -74,8 +75,7 @@ int main(int arg1, char *arg2[]) {
 						gradesum += final_grades[j][hw];
 					}
 					double grade_avg = (double) gradesum / finalRow;
-					printf("Assignment %d - Average = %f \n", hw + 1,
-							grade_avg);
+					printf("Assignment %d - Average = %f \n", hw + 1,grade_avg);
 					grade_avg = 0;
 					break;
 				}
