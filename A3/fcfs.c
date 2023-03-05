@@ -16,7 +16,7 @@ struct threadInfo{
     int completion_time;
 };
 
-void insertionSort(struct threadInfo arr[], int n) {
+void sort(struct threadInfo arr[], int n) {
     int i, key, j;
     for (i = 1; i < n; i++) {
         struct threadInfo key = arr[i];
@@ -56,7 +56,7 @@ int main(){
 
     // move tasks to a new (more accurate size - alternative to slicing) and sort it using the insertation sort algorithm
     struct threadInfo tasks_sliced[n_tasks];
-    for (int i=0; i<n_tasks; i++){tasks_sliced[i] = tasks[i];} insertionSort(tasks_sliced, n_tasks);
+    for (int i=0; i<n_tasks; i++){tasks_sliced[i] = tasks[i];} sort(tasks_sliced, n_tasks);
 
 
     // print the col header
