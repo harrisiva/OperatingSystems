@@ -25,6 +25,7 @@ void insertionSort(struct threadInfo arr[], int n) {
             arr[j + 1] = arr[j];j = j - 1;
         } arr[j + 1] = key;
     }
+    return;
 }
 
 int main(){
@@ -88,6 +89,6 @@ int main(){
 
     // print the averages
     printf("The average waiting time: %.2f\n", average_waiting_time/n_tasks);
-    printf("The average turn-around time: %.2f", average_turn_around_time/n_tasks);
+    printf("The average turn-around time: %.2f\n", average_turn_around_time/n_tasks);
     return 0;
 }
