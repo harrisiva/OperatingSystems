@@ -1,37 +1,83 @@
+/*
+    Name: Harriharan Sivakumar
+    Student ID: 200676770
+    Date: 2023-02-09
+*/
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
-// figure out structure for the multi processing (handle multiple nested child processes) and then bring in code from test.c
-int main(){
-    // pid_t pid; // at the start of the script, same in either case
-    if (fork()==0){ // in grad TA process
-        printf("In GradTA 1\n");
-        int i;
-        for (i=0;i<2;i++){
-        if (fork()==0){
-            printf("In TA Layer%i\n");
-        } else {
-            printf("In TA's GradTA calling wait\n");
-            wait(NULL);
-            printf("In TA's GradTA, wait finished\n");
-        }
-        }
+#define MAX_COLS 10
+#define MAX_ROWS 10
 
-    }  else { // in teacher process
-        printf("In teacher, calling wait\n");
-        // set up the shared memory (PRODUCER) with the matrix
-        wait(NULL);
-        printf("Wait finished\n");
-    }
+int main(int arg1, char *arg2[]) {
+    
+	//Initialize required variables
+	char *row_num; char *filename;
 
-    // Read text file using kernel commands (from A1 filecopy)
-    // create 2d matrix/array of grades 
-    // [[grade_set_1],[grade_set_2]] <- parent
-    // [[chapter_1_grades], [chapter_2_grades]] <- grad TA (==num_of_grades_in_grade_set/2)
-    // [[assignment_1_grades], [assignment_2_grades]] <- TA process (==num_of_assignment_grades) 
-    // calculate average, print, and terminate child process
+	char buf[25];
+	int grades[MAX_COLS][MAX_ROWS];
+	int cols = 0;
 
-    return 0;
+	int total_rows = 0; // also used in iteration
+	int total_cols = 0; // also used in iteration
+	
+
+	if (arg1>2 || arg1<2) {printf("Error: Incorrect number of arguments given, please try again.\n");exit(1);} // check if wrong number of inputs were given
+	filename = arg2[1]; // If the correct number of arguments were given, set filename
+
+	// grade reading component
+	FILE *fp = fopen(filename, "r"); // open file to read for grades
+	int grade; 
+	int num = 0;
+	while ((row_num = fgets(buf, sizeof(buf), fp)) != NULL) { // get values of a student into the buffer
+		while (sscanf(row_num, "%d%n", &grade, &num) == 1) { 
+			grades[total_rows][cols] = grade;  
+			if (total_rows == 0){total_cols++;}
+			row_num += num; // increase row_num relative to num
+			cols++; // increase number of cols
+		}
+		total_rows++; // increment total number of rows
+		cols = 0; // reset col number for new student
+	}
+
+    // close file after reading grades
+	fclose(fp);
+
+	
+	for (int i = 0; i < total_rows; i++) { //iteration
+		int gradTA = fork();
+		if (gradTA < 0) {
+			printf("Error: Failed to create GradTA process\n");exit(1);
+		} else if (gradTA == 0) {
+		
+			for (int a = 0; a < total_cols; a++) { //create the required TA processes 
+
+				int TA = fork(); // create TA process
+				if (TA < 0) {printf("Error: Failed to create TA process\n"); exit(1);}
+
+				else if (TA == 0) { // TA Process
+					
+					// get sum of grades
+					int sum = 0;
+					for (int j = 0; j < total_rows; j++) {
+						sum += grades[j][a];
+					}
+
+					// calculate the average 
+					double average = (double) sum / total_rows;
+					printf("Assignment %d - Average = %f \n", a + 1,average);
+					average = 0;
+					break;
+
+				} else if (TA > 0) {wait(NULL);} // Grad TA Process
+
+			} break;
+
+		} else if (gradTA > 0) {wait(NULL);break;} // Teacher Process
+
+	} return 0;
 }
