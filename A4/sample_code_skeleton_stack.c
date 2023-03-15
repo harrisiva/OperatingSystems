@@ -56,7 +56,7 @@ int is_empty(StackNode *top) {
         return 0;
 }
 
-// Thread's push function ??
+// Thread's push function ?? (would these need any mutex locks?)
 void* thread_push(void *args) // add mutex here or within the push and pull cause thats where the shared data (stack) is actually manipulated by each thread
 {
 	int i; // where does this get used? 
