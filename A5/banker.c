@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <stdbool.h>
 #include <string.h>
 #define INT_MAX 1000
 
@@ -12,6 +16,18 @@ char MSG_THREAD_FINISHED[] =  "Thread has finished\n";
 char MSG_THREAD_STARTED[] = "Thread has started\n";
 char MSG_THREAD_RELEASED[] = "Thread is releasing resources\n";
 
+int ROWS = 0;
+int COLS = 0;
+void print_matrix(int matrix[ROWS][COLS], int h, int w) {
+    int i, j;
+    for (i = 0; i < h; i++) {
+        for (j = 0; j < w; j++) {
+            printf("%d", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 // Required functions:
 //  func load_max: loads maximum resources per resource type (hard: Dynamic number of customers and resources)
 //  func validate_max: check if request is under max number of resources per thread
@@ -21,6 +37,9 @@ char MSG_THREAD_RELEASED[] = "Thread is releasing resources\n";
 
 // max resources types (list len), max resources per resource type list seperted
 int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST ITERATION
+    // Open File
+    FILE *file;
+    file = fopen("sample_in_banker.txt", "r");
     
     // get and set the maximum number of processes (number of resources) and customers
     int max_processes = argc-1;
@@ -45,6 +64,30 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
         {6,3,3,2},
         {5,5,7,5}
     };
+
+    // Pull from file
+    int w, h;
+    char line[256], *number;
+    int matrix[max_customers][argc];
+    ROWS = max_customers;
+    COLS = argc;
+    h = 0;
+    while (!feof(file))
+    {
+        w = 0;
+        fscanf(file, "%s", line);
+        number = strtok(line, ",");
+        while (number != NULL) 
+        {
+            matrix[h][w] = atoi(number);
+            w++;
+            number = strtok(NULL, ",");
+        }
+        h++;
+    }
+    print_matrix(matrix, h, w);
+
+    fclose(file);
 
     // Enter loop for commands
     char command[INT_MAX];
@@ -74,6 +117,11 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     }
 
     // Cleanup portion of the program
+    
+    
+    
+    
+    
 
     // TODO:
     // Initiative maximum array to the values based on the sampe in banker input file (function)
