@@ -34,6 +34,8 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     printf("Currently Available Resources:");
     for (int i=0;i<max_processes;i++){available[i] = atoi(argv[i+1]);printf(" %i", available[i]);}printf("\n"); 
 
+    // print matrix from file
+
     // Safe state
     // Enter loop to take commands
 
