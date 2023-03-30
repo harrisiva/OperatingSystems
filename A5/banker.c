@@ -17,7 +17,7 @@ char MSG_THREAD_STARTED[] = "Thread has started\n";
 char MSG_THREAD_RELEASED[] = "Thread is releasing resources\n";
 
 int ROWS = 0;
-int COLS = 0;
+int COLS = 0; // RESOLVE LATER (MAKE NON GLOBAL)
 void print_matrix(int matrix[ROWS][COLS], int h, int w) {
     int i, j;
     for (i = 0; i < h; i++) {
@@ -57,20 +57,12 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     printf("Currently Available Resources:");
     for (int i=0;i<max_processes;i++){available[i] = atoi(argv[i+1]);printf(" %i", available[i]);}printf("\n"); 
     
-    int max_resources[5][4] = { // Hard coded max resources for now 
-        {6,4,7,3},
-        {4,2,3,2},
-        {2,5,3,3},
-        {6,3,3,2},
-        {5,5,7,5}
-    };
-
     // Pull from file
-    int w, h;
-    char line[256], *number;
-    int matrix[max_customers][argc];
+    int w, h; // for indexing matrix in while loop
+    char line[256], *number; // line buffer and 
+    int max_resources[max_customers][max_processes];
     ROWS = max_customers;
-    COLS = argc;
+    COLS = max_processes;
     h = 0;
     while (!feof(file))
     {
@@ -79,14 +71,13 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
         number = strtok(line, ",");
         while (number != NULL) 
         {
-            matrix[h][w] = atoi(number);
+            max_resources[h][w] = atoi(number);
             w++;
             number = strtok(NULL, ",");
         }
         h++;
     }
-    print_matrix(matrix, h, w);
-
+    print_matrix(max_resources, h, w);
     fclose(file);
 
     // Enter loop for commands
