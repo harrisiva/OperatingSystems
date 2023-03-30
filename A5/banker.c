@@ -29,8 +29,8 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     scanf("%d",&max_customers);
 
     // set "data structure" for bankers algorithm
-    int available[max_processes];
-    int max[max_customers][max_processes]; 
+    int available[max_processes]; // status of each thread
+    int max[max_customers][max_processes]; // i=Thread, j=Resource
     int allocation[max_customers][max_processes];
     int need[max_customers][max_processes];
 
@@ -49,12 +49,31 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     // Enter loop for commands
     char command[INT_MAX];
     while (strcmp(command, "Exit")!=0){
+        
+        // Get command from user
         printf("Enter Command: ");
         scanf("%s",command);
-        printf("Command: %s\n", command);
+    
+        if (strcmp(command,"Exit")==0){break;}; // if command is exit, break the loop 
+
+        // Extract details from the command for processing
+        // Command type 
+        // Command parameters (load into int array from the terminal)
+
+        // If RQ (request), check if command satisfies the following:
+        //      thread does not request more than maximum number of resources allocated to itself
+        //      thread does not make a request that leaves the system unsafe (denied, print error statement)
+        // Print safe message and update "DS"
+
+        // If RL (release), release resources and "DS", print success message
+
+        // Status, print all arrays and matrices used as "DS"
+
+        // If Run, 
+
     }
 
-    // Exit function here (or exit processes/thread handling)
+    // Cleanup portion of the program
 
     // TODO:
     // Initiative maximum array to the values based on the sampe in banker input file (function)
@@ -70,6 +89,7 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     //      If status, print all arrays and matrices used (available, maximum, allocation, and need)
 
     //      If run, execute the safe sequence based on the current state and all threads should run the same **function** code (just prints, no global/critical sections)
-    
+    //          Run the commands (create thread for each) and run a mutual function (prints contents similar to status) 
+
     return 0;
 }
