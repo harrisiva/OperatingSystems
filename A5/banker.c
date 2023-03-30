@@ -26,16 +26,16 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
 
     // set "data structure" for bankers algorithm
     int available[max_processes];
-    int max[max_customers][argc]; 
-    int allocation[max_customers][argc];
-    int need[max_customers][argc];
+    int max[max_customers][max_processes]; 
+    int allocation[max_customers][max_processes];
+    int need[max_customers][max_processes];
 
     // Load available resources per resource type from argv to the available array
     printf("Currently Available Resources:");
     for (int i=0;i<max_processes;i++){available[i] = atoi(argv[i+1]);printf(" %i", available[i]);}printf("\n"); 
 
     // Safe state
-
+    // Enter loop to take commands
 
 
 
