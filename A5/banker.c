@@ -18,27 +18,21 @@ char MSG_THREAD_RELEASED[] = "Thread is releasing resources\n";
 // max resources types (list len), max resources per resource type list seperted
 int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST ITERATION
     
-    // get and set the maximum number of customers (number of processes)
+    // get and set the maximum number of processes (number of resources) and customers
+    int max_processes = argc-1;
     int max_customers;
     printf("Number of Customers: ");
     scanf("%d",&max_customers);
+
     // set "data structure" for bankers algorithm
-    int available[argc];
+    int available[max_processes];
     int max[max_customers][argc]; 
     int allocation[max_customers][argc];
     int need[max_customers][argc];
 
-    // TODO_LATER: get max for each customer from sample_in_banker.txt (skipping and loading into 2d list now)
-
-    // get input for the number of customers
-
-
-    // print currently available resources (argv) (includes the . right now)
-    printf("Currently Available Resources: ");
-    for (int i=1;i<argc;i++){
-        printf("%c ", *argv[i]);
-    } printf("\n");
-
+    // Load available resources per resource type from argv to the available array
+    printf("Currently Available Resources:");
+    for (int i=0;i<max_processes;i++){available[i] = atoi(argv[i+1]);printf(" %i", available[i]);}printf("\n"); 
 
     // Safe state
 
