@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define INT_MAX 1000
+
+char FILENAME[] = "sample_in_banker.txt";
 
 // Standardized output messages (e.x. invalid input)
 char MSG_INVALID_INPUT[] = "Invalid input, use one of RQ, RL, Status, Run, Exit\n";
@@ -33,13 +37,24 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     // Load available resources per resource type from argv to the available array
     printf("Currently Available Resources:");
     for (int i=0;i<max_processes;i++){available[i] = atoi(argv[i+1]);printf(" %i", available[i]);}printf("\n"); 
+    
+    int max_resources[5][4] = { // Hard coded max resources for now 
+        {6,4,7,3},
+        {4,2,3,2},
+        {2,5,3,3},
+        {6,3,3,2},
+        {5,5,7,5}
+    };
 
-    // print matrix from file
+    // Enter loop for commands
+    char command[INT_MAX];
+    while (strcmp(command, "Exit")!=0){
+        printf("Enter Command: ");
+        scanf("%s",command);
+        printf("Command: %s\n", command);
+    }
 
-    // Safe state
-    // Enter loop to take commands
-
-
+    // Exit function here (or exit processes/thread handling)
 
     // TODO:
     // Initiative maximum array to the values based on the sampe in banker input file (function)
