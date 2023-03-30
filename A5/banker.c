@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int MAX_LINE_LENGTH = 500;
-int MAX_CUSTOMERS_LIMIT = 500;
-int MAX_RESOURCES_LIMIT = 500;
-
 // Standardized output messages (e.x. invalid input)
 char MSG_INVALID_INPUT[] = "Invalid input, use one of RQ, RL, Status, Run, Exit\n";
 char MSG_SAFE_STATE[] = "State is safe, and request is satisfied\n";
@@ -19,22 +15,21 @@ char MSG_THREAD_RELEASED[] = "Thread is releasing resources\n";
 //  func thread_f: function called by thread (refer to requirements)
 //  func run_safe_sequence: run safe sequence based on the current state and make all threads run the given function 
 
-int main(){ // arguments taken when invoked (argv) -- LAST ITERATION
-    int MAX_CUSTOMERS=0;
-    int max_per_per_customer[MAX_CUSTOMERS_LIMIT][MAX_RESOURCES_LIMIT]; // create a nested list to store i (customer number), j (resource type number)
+// max resources types (list len), max resources per resource type list seperted
+int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST ITERATION
+    
+    // TODO_LATER: get max for each customer from sample_in_banker.txt (skipping and loading into 2d list now)
 
-    //  create a vector/array with the number of resources (value) per resource types (location) (function?) -- LAST ITERATION
-    FILE *fp;
-    fp = fopen("sample_in_banker.txt", "r"); 
-    char buffer[MAX_LINE_LENGTH];
-    while (fgets(buffer, MAX_LINE_LENGTH,fp)!=NULL){
-        int a, b, c, d;
-        int num_resources = sscanf(buffer, "%i,%i,%i,%i", &a, &b, &c, &d);
-        for (int i=0;i<num_resources;i++){
-            printf("");
-        }
-    }
-    fclose(fp);
+    // get input for the number of customers
+    int max_customers;
+    printf("Number of Customers: ");
+    scanf("%d",&max_customers);
+
+    // print currently available resources (argv) (includes the . right now)
+    printf("Currently Available Resources: ");
+    for (int i=1;i<argc;i++){
+        printf("%c ", *argv[i]);
+    } printf("\n");
 
     // TODO:
     // Initiative maximum array to the values based on the sampe in banker input file (function)
