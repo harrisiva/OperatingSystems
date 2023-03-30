@@ -11,25 +11,39 @@ char MSG_THREAD_RELEASED[] = "Thread is releasing resources\n";
 // Required functions:
 //  func load_max: loads maximum resources per resource type (hard: Dynamic number of customers and resources)
 //  func validate_max: check if request is under max number of resources per thread
-//  func check_safe_state: check safety state criteria (safety algorithm)
+//  func check_safe_state: check safety state criteria (safety algorithm) + DS
 //  func thread_f: function called by thread (refer to requirements)
 //  func run_safe_sequence: run safe sequence based on the current state and make all threads run the given function 
 
 // max resources types (list len), max resources per resource type list seperted
 int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST ITERATION
     
-    // TODO_LATER: get max for each customer from sample_in_banker.txt (skipping and loading into 2d list now)
-
-    // get input for the number of customers
+    // get and set the maximum number of customers (number of processes)
     int max_customers;
     printf("Number of Customers: ");
     scanf("%d",&max_customers);
+    // set "data structure" for bankers algorithm
+    int available[argc];
+    int max[max_customers][argc]; 
+    int allocation[max_customers][argc];
+    int need[max_customers][argc];
+
+    // TODO_LATER: get max for each customer from sample_in_banker.txt (skipping and loading into 2d list now)
+
+    // get input for the number of customers
+
 
     // print currently available resources (argv) (includes the . right now)
     printf("Currently Available Resources: ");
     for (int i=1;i<argc;i++){
         printf("%c ", *argv[i]);
     } printf("\n");
+
+
+    // Safe state
+
+
+
 
     // TODO:
     // Initiative maximum array to the values based on the sampe in banker input file (function)
