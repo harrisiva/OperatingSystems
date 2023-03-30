@@ -90,7 +90,7 @@ int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST
     
         if (strcmp(command,"Exit")==0){break;}; // if command is exit, break the loop 
 
-        // Extract details from the command for processing
+        // Extract details from the command for processing (scanf?)
         // Command type 
         // Command parameters (load into int array from the terminal)
 
