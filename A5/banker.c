@@ -38,7 +38,7 @@ bool safe();
 void request_resources(char* buffer);
 void release_resources(char* buffer);
 void status();
-void release_resources(int thread_number);
+void release_thread(int thread_number);
 void run();
 void invoke_command(char *prefix, char *buffer);
 
@@ -125,10 +125,10 @@ bool safe() {
                 }
                 if (i == resources) {
                     for (i = 0; i < resources; i++) {
-                        work[i] += allocated[j][i];
+                        work[i] += allocated[h][i];
                     }
 
-                    finish[j] = true;
+                    finish[h] = true;
                 }
             }
         }
@@ -267,7 +267,7 @@ void status() {
 * Release thread resources
 *
 */
-void release_thread_resources(int thread_num) { 
+void release_thread(int thread_num) { 
     printf("--> Customer/Thread %d \n", thread_num);
     printf("    allocated resources: ");
     for (int i = 0; i < resources; i++) { 
@@ -347,7 +347,7 @@ void run() {
 
                 i++;
                 remaining_thread_count -= 1;
-                release_thread_resources(thread_num);
+                release_thread(thread_num);
             }
         }
         counter++;
