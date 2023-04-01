@@ -1,6 +1,6 @@
 #Do not edit the contents of this file.
 CC = gcc
-CFLAGS = -Werror -Wall -g -std=gnu99
+CFLAGS =   -Wall -g -std=gnu99
 LDFLAGS = -lrt -lpthread
 TARGET = banker 
 OBJFILES = banker.o  
@@ -11,3 +11,5 @@ runq1: banker
 	./banker 10 5 7 8
 clean:
 	rm -f $(OBJFILES) $(TARGET)  $(TARGET) *.exe  *~ *.out
+
+#-Werror

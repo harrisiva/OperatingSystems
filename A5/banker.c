@@ -1,134 +1,432 @@
+/**
+--------------------------------------
+Authors: Aidan Traboulay & Aleksander Neceski
+IDs: 200115590 & 201851860
+Emails: trab5590@mylaurier.ca & nece1860@mylaurier.ca
+--------------------------------------
+**/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <stdbool.h>
-#include <string.h>
-#define INT_MAX 1000
 
-char FILENAME[] = "sample_in_banker.txt";
+#define matrixCHAR 21
 
-// Standardized output messages (e.x. invalid input)
-char MSG_INVALID_INPUT[] = "Invalid input, use one of RQ, RL, Status, Run, Exit\n";
-char MSG_SAFE_STATE[] = "State is safe, and request is satisfied\n";
-char MSG_THREAD_FINISHED[] =  "Thread has finished\n";
-char MSG_THREAD_STARTED[] = "Thread has started\n";
-char MSG_THREAD_RELEASED[] = "Thread is releasing resources\n";
+/*
+*
+* Global Variables
+*
+*/
+int thread_arr_len = 0; 
+int resources = 0;
+int **matrix;
+int **allocated;
+int *available;
 
-int ROWS = 0;
-int COLS = 0; // RESOLVE LATER (MAKE NON GLOBAL)
-void print_matrix(int matrix[ROWS][COLS], int h, int w) {
-    int i, j;
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
-            printf("%d", matrix[i][j]);
+/*
+*
+* Function Prototypes
+*
+*/
+int *get_lines(char *line);
+void read_file(FILE** file, int **matrix);
+void get_thread_length(FILE **file);
+bool safe();
+void request_resources(char* buffer);
+void release_resources(char* buffer);
+void status();
+void release_resources(int thread_number);
+void run();
+void invoke_command(char *prefix, char *buffer);
+
+/*
+*
+* Get the matrixmimum number of resources from the file
+*
+*/
+int *get_lines(char *line) { 
+    int i = 0;
+    char *token = strtok(line, ",");
+    int *thread_arr = malloc(sizeof(int) * resources);
+    thread_arr[i] = atoi(token);
+
+    while ((token = strtok(NULL, ","))) {    
+        i += 1;
+        thread_arr[i] = atoi(token);
+    }
+    return thread_arr;
+}
+
+/*
+*
+* Read the file and store the matrix resources in a 2D array
+*
+*/
+void read_file(FILE **file, int **matrix) { 
+    ssize_t temp;
+    size_t length = 0;
+    char *line;
+    int *thread_array; 
+    int i = 0; 
+
+    while ((temp = getline(&line, &length, *file)) != -1) {
+        *(matrix + i) = malloc(sizeof(int) * resources);
+        thread_array = get_lines(line);
+        for (int j = 0; j < resources; j++) { 
+            matrix[i][j] = thread_array[j];
+        }
+        i += 1;
+    }
+    return;
+}
+
+/*
+*
+* Determine the length of the thread array
+*
+*/
+void get_thread_length(FILE **file) { 
+    ssize_t read;
+    size_t length = 0;
+    char *line;
+    while ((read = getline(&line, &length, *file)) != -1) { 
+        thread_arr_len += 1;
+    }
+    rewind(*file);
+    return;
+}
+
+/*
+*
+* Determine if the state is safe
+*
+*/
+bool safe() {
+    int work[resources];
+    bool finish[thread_arr_len];
+    bool is_safe = true;
+    int q, h, i;
+    for (q = 0; q < resources; q++) {
+        work[q] = available[q];
+    }
+    for (q = 0; q < thread_arr_len; i++) {
+        finish[q] = false;
+    }
+    for (q = 0; q < thread_arr_len; q++) {
+        for (h = 0; h < thread_arr_len; h++) {
+            if (finish[h] == false) {
+                for (i = 0; i < resources; i++) {
+                    if (matrix[h][i] - allocated[h][i] > work[i]) {
+                        break;
+                    }
+                }
+                if (i == resources) {
+                    for (i = 0; i < resources; i++) {
+                        work[i] += allocated[j][i];
+                    }
+
+                    finish[j] = true;
+                }
+            }
+        }
+    }
+    for (q = 0; q < thread_arr_len; q++) {
+        if (finish[q] == false) {
+            is_safe = false;
+        }
+    }
+    return is_safe;
+}
+
+/*
+*
+* Request resources command
+*
+*/
+void request_resources(char *buf) {
+    int q;
+    bool deny = false;
+    
+    char* token = strtok(buf, " ");
+    token = strtok(NULL, " ");
+    int customer_number = atoi(token);
+    int customer_resources[resources];
+    q = 0;
+
+    while ((token = strtok(NULL, " "))) {   
+        customer_resources[q] = atoi(token);
+        q++;
+    }
+
+    for (q = 0; q < resources; q++) {
+        if (customer_resources[q] > matrix[customer_number][q]) {
+            deny = true;
+        }
+    }
+
+    if (deny == false) {
+        for (q = 0; q < resources; q++) {
+            if (customer_resources[q] > available[q]) {
+                deny = true;
+            }
+        }
+    }
+
+    if (deny == false) {
+        for (q = 0; q < resources; q++) {
+            available[q] -= customer_resources[q];
+            allocated[customer_number][q] += customer_resources[q];
+        }
+    }
+
+    if (deny == true || safe() == false) {
+        printf("State is not safe, and request is not satisfied\n");
+    } else {
+        printf("State is safe, and request is satisfied\n");
+    }
+    return;
+}
+
+/*
+*
+* Release resources command
+*
+*/
+void release_resources(char *buffer) {
+    char* token = strtok(buffer, " ");
+    int temp[resources];
+    token = strtok(NULL, " "); 
+    int thread_num = atoi(token);
+    int q = 0;
+    while ((token = strtok(NULL, " "))) {   
+        temp[q] = atoi(token);
+        q++;
+    }
+    printf("    To release: ");
+    for (int i = 0; i < resources; i++) { 
+        available[i] += temp[i];
+        allocated[thread_num][i] -= temp[i];
+        printf("%d ", temp[i]);
+    }
+    printf("\n");
+    printf("    Now available Resources: ");
+    for (int i = 0; i < resources; i++) { 
+        printf("%d ", available[i]);
+    }
+    printf("\n");
+    printf("    Resources still held by thread: ");
+    for (int i = 0; i < resources; i++) { 
+        printf("%d ", allocated[thread_num][i]);
+    }
+    printf("\n");
+}
+
+/*
+*
+* Status command
+*
+*/
+void status() {
+    printf("available Resources: \n");
+    int i, j; 
+    for (i = 0; i < resources; i++) { 
+        printf("%d ", available[i]);
+    }
+    printf("\n");
+
+    printf("matrix Resources: \n");
+    for (i = 0; i < thread_arr_len; i++) { 
+        for (j = 0; j < resources; j++) { 
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("allocated Resources: \n");
+    for (i = 0; i < thread_arr_len; i++) {
+        for (j = 0; j < resources; j++) { 
+            printf("%d ", allocated[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("Need Resources: \n");
+    for (i = 0; i < thread_arr_len; i++) { 
+        for (j = 0; j < resources; j++) { 
+            printf("%d ", matrix[i][j] - allocated[i][j]);
         }
         printf("\n");
     }
 }
 
-// Required functions:
-//  func load_max: loads maximum resources per resource type (hard: Dynamic number of customers and resources)
-//  func validate_max: check if request is under max number of resources per thread
-//  func check_safe_state: check safety state criteria (safety algorithm) + DS
-//  func thread_f: function called by thread (refer to requirements)
-//  func run_safe_sequence: run safe sequence based on the current state and make all threads run the given function 
-
-// max resources types (list len), max resources per resource type list seperted
-int main(int argc, char *argv[]){ // arguments taken when invoked (argv) -- LAST ITERATION
-    // Open File
-    FILE *file;
-    file = fopen("sample_in_banker.txt", "r");
+/*
+*
+* Release thread resources
+*
+*/
+void release_thread_resources(int thread_num) { 
+    printf("--> Customer/Thread %d \n", thread_num);
+    printf("    allocated resources: ");
+    for (int i = 0; i < resources; i++) { 
+        printf("%d ", allocated[thread_num][i]);
+    }
     
-    // get and set the maximum number of processes (number of resources) and customers
-    int max_processes = argc-1;
-    int max_customers;
-    printf("Number of Customers: ");
-    scanf("%d",&max_customers);
+    printf(" \n");
 
-    // set "data structure" for bankers algorithm
-    int available[max_processes]; // status of each thread
-    int max[max_customers][max_processes]; // i=Thread, j=Resource
-    int allocation[max_customers][max_processes];
-    int need[max_customers][max_processes];
+    printf("    Needed: ");
+    for (int i = 0; i < resources; i++) {  
+        printf("%d ", matrix[thread_num][i] -  allocated[thread_num][i]);
+    }
 
-    // Load available resources per resource type from argv to the available array
-    printf("Currently Available Resources:");
-    for (int i=0;i<max_processes;i++){available[i] = atoi(argv[i+1]);printf(" %i", available[i]);}printf("\n"); 
+    printf(" \n");
+
+    printf("    available: ");
+    for (int i = 0; i < resources; i++) { 
+        printf("%d ", available[i]);
+    }
+
+    printf(" \n");
+
+    printf("    Thread has started \n");
+    printf("    Thread has finished \n");
+    printf("    Thread is releasing resources \n");
+    for (int i = 0; i < resources; i++) { 
+        available[i] += allocated[thread_num][i];
+    }
+
+    printf("    New available: ");
+    for (int i = 0; i < resources; i++) { 
+        printf("%d ", available[i]);
+    }
+
+    printf(" \n");
+}
+
+/*
+*
+* Run command
+*
+*/
+void run() {
+    int thread_valid;
+    int remaining_threads[thread_arr_len];
+    int remaining_thread_count = thread_arr_len;
     
-    // Pull from file
-    int w, h; // for indexing matrix in while loop
-    char line[256], *number; // line buffer and 
-    int max_resources[max_customers][max_processes];
-    ROWS = max_customers;
-    COLS = max_processes;
-    h = 0;
-    while (!feof(file))
-    {
-        w = 0;
-        fscanf(file, "%s", line);
-        number = strtok(line, ",");
-        while (number != NULL) 
-        {
-            max_resources[h][w] = atoi(number);
-            w++;
-            number = strtok(NULL, ",");
+    for (int i = 0; i < thread_arr_len; i++) { 
+        remaining_threads[i] = i;
+    }
+    
+    int thread_num;
+    int counter = 0;
+
+    printf("Safe Sequence: ");
+    for (int i = 0; i < thread_arr_len; i++) { 
+        printf("%d ", remaining_threads[i]);
+    }
+    
+    printf(" \n");
+    
+    while (remaining_thread_count > 0 && counter < thread_arr_len) { 
+        for (int i = 0; i < remaining_thread_count; i++) { 
+            thread_valid = 1;
+            thread_num = remaining_threads[i];
+
+            for (int j = 0; j < resources; j++) { 
+                if (available[j] < (matrix[thread_num][j] - allocated[thread_num][j])) {
+                    thread_valid = 0;
+                }
+            }
+
+            if (thread_valid == 1) {
+                for (; i < remaining_thread_count - 1; i++) { 
+                    remaining_threads[i] = remaining_threads[i + 1];
+                }
+
+                i++;
+                remaining_thread_count -= 1;
+                release_thread_resources(thread_num);
+            }
         }
-        h++;
+        counter++;
     }
-    print_matrix(max_resources, h, w);
-    fclose(file);
+}
 
-    // Enter loop for commands
-    char command[INT_MAX];
-    while (strcmp(command, "Exit")!=0){
+/*
+*
+* Command handler
+*
+*/
+void invoke_command(char *prefix, char *buf) { 
+    if (strcmp(prefix, "Exit") == 0) {
+        exit(0);
+    } else if (strcmp(prefix, "Run") == 0) { 
+        run();
+    } else if (strcmp(prefix, "Status") == 0) { 
+        status();
+    } else if (strcmp(prefix, "RQ") == 0) { 
+        request_resources(buf);
+    } else if (strcmp(prefix, "RL") == 0) { 
+        release_resources(buf);
+    } else { 
+        printf("Invalid input, use one of RQ, RL, Status, Run, Exit \n");
+    }
+}
+
+/*
+*
+* Main
+*
+*/
+int main(int argc, char **argv) {
+    FILE* f;
+    f = fopen("sample_in_banker.txt" , "r");
+
+    available = malloc(sizeof(int) * resources);
+
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) { 
+            available[i-1] = atoi(argv[i]);
+            resources += 1; 
+        }
+    } else { 
+        exit(0);
+    }
+
+    get_thread_length(&f);
+    matrix = malloc(sizeof(int*) * thread_arr_len);
+    read_file(&f, matrix);
+    allocated = malloc(sizeof(int*) * thread_arr_len);
+
+    printf("Number of Customers: %d \n", thread_arr_len);
+    printf("Currently available Resources: ");
+    for (int i = 0; i < resources; i++) { 
+        printf("%d ", available[i]);
+    }
+
+    printf(" \n");
+
+    printf("matriximum resources from file: \n");
+    for (int i = 0; i < thread_arr_len; i++) { 
+        allocated[i] = calloc(resources, sizeof(int));
+        for (int j = 0; j < resources; j++) { 
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    while (1) {
+        char buf[matrixCHAR];                  
         
-        // Get command from user
-        printf("Enter Command: ");
-        scanf("%s",command);
-    
-        if (strcmp(command,"Exit")==0){break;}; // if command is exit, break the loop 
-
-        // Extract details from the command for processing (scanf?)
-        // Command type 
-        // Command parameters (load into int array from the terminal)
-
-        // If RQ (request), check if command satisfies the following:
-        //      thread does not request more than maximum number of resources allocated to itself
-        //      thread does not make a request that leaves the system unsafe (denied, print error statement)
-        // Print safe message and update "DS"
-
-        // If RL (release), release resources and "DS", print success message
-
-        // Status, print all arrays and matrices used as "DS"
-
-        // If Run, 
-
+        fputs ("Enter Command: ", stdout);   
+        while (fgets(buf, matrixCHAR, stdin)) {  
+            char *buff = malloc(sizeof(char) * matrixCHAR);
+            strcpy(buff, buf);
+            char *prefix = strtok(buf, " \n");
+            invoke_command(prefix, buff);
+            fputs ("Enter Command: ", stdout);
+        }
     }
-
-    // Cleanup portion of the program
-    
-    
-    
-    
-    
-
-    // TODO:
-    // Initiative maximum array to the values based on the sampe in banker input file (function)
-
-    // Enter while loop (while input not Exit) to handle ds (bankers and other algorithms)
-    //      Assume input follows format 
-
-    //      If request, Check if request is under max number of resources per thread (function)
-    //      Check if request meets system safe critera (safety algorithm from ch.8) and print message in main (function)
-
-    //      If release, release resources and update DS accordingly
-
-    //      If status, print all arrays and matrices used (available, maximum, allocation, and need)
-
-    //      If run, execute the safe sequence based on the current state and all threads should run the same **function** code (just prints, no global/critical sections)
-    //          Run the commands (create thread for each) and run a mutual function (prints contents similar to status) 
-
-    return 0;
 }
